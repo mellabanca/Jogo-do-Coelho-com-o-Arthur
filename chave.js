@@ -15,4 +15,9 @@ class Chave{
         )
         World.add(engine.world,this.chave)
     }
+     cortar(){
+        World.remove(engine.world,this.chave)     
+     }
+
+
 }
