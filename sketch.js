@@ -12,8 +12,12 @@ let world;
 
 var piso;
 var corda;
+var corda2;
+var corda3;
 var ovc;
 var chave;
+var chave2;
+var chave3;
 
 var cena;
 var chocolate;
@@ -21,12 +25,18 @@ var tobi;
 var coelho;
 
 var botal;
+var botal2;
+var botal3;
+
 
 var piscando;
 var comendo;
 var triste;
 
 var thau, tek, mimi, nhenhe, suuu;
+var balu;
+var muty;
+
 
 
 function preload(){
@@ -47,13 +57,25 @@ function preload(){
   comendo.playing = true;
   triste.playing = true;
 
-  comendo.loop = false;
-  triste.loop = false;
+  comendo.looping = false;
+  triste.looping = false;
 }
 
 function setup() 
 {
-  createCanvas(500,700);
+  var estanocelular = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(estanocelular){
+    telaW = displayWidth;
+    telaH = displayHeight;
+    createCanvas(displayWidth+80,displayHeight);
+  } else {
+    telaW = windowWidth;
+    telaH = windowHeight;
+    createCanvas(windowWidth,windowHeight);
+  }
+ 
+  thau.play();
+  thau.setVolume(0.5);
   engine = Engine.create();
   world = engine.world;
 
@@ -65,12 +87,16 @@ function setup()
   imageMode(CENTER);
   textSize(50)
 
-  piso = new Piso(200,690,600,20);
-  corda = new Rope(6,{x:245,y:30});
+  piso = new Piso(200,telaH,600,20);
+  corda = new Rope(8,{x:40,y:30});
+  corda2 = new Rope(7,{x:370,y:40});
+  corda3 = new Rope(4,{x:400,y:225});
   ovc = Bodies.circle(300,300,15);
   Matter.Composite.add(corda.body,ovc);
   chave = new Chave(corda,ovc);
-  coelho = createSprite(250,620,100,100);
+  chave2 = new Chave(corda2,ovc);
+  chave3 = new Chave(corda3,ovc);
+  coelho = createSprite(420,telaH-80,100,100);
   coelho.addImage(tobi);
   coelho.scale = 0.2
   coelho.addAnimation("piscando", piscando);
@@ -78,25 +104,47 @@ function setup()
   coelho.addAnimation("chorando", triste);
   coelho.changeAnimation("piscando");
   botal = createImg("cut_btn.png");
-  botal.position(220,30);
+  botal.position(20,30);
   botal.size(50,50);
   botal.mouseClicked(cai);
+  botal2 = createImg("cut_btn.png");
+  botal2.position(330,35);
+  botal2.size(50,50);
+  botal2.mouseClicked(cai2);
+  botal3 = createImg("cut_btn.png");
+  botal3.position(360,200);
+  botal3.size(50,50);
+  botal3.mouseClicked(cai3);
+  //balu = createImg("balloon.png");
+  //balu.position(10,210);
+  //balu.size(150,100);
+  //balu.mouseClicked(vento);
+  muty = createImg("mute.png");
+  muty.position(450,20);
+  muty.size(50,50);
+  muty.mouseClicked(mut);
 }
 
 function draw() 
 {
   background(51);
-  image(cena, width/2, height/2, 500, 700);
+  image(cena, width/2, height/2, displayWidth+80, displayHeight);
 
   Engine.update(engine);
 
   piso.exibir();
   corda.show();
+  corda2.show();
+  corda3.show();
   if(colid(ovc,coelho)===true){
     coelho.changeAnimation("comendo");
+    nhenhe.play();
   }
   if(ovc !==null && ovc.position.y >= 650){
     coelho.changeAnimation("chorando");
+    ovc = null;
+    thau.stop();
+    mimi.play();
   }
   if(ovc!==null){
   image(chocolate, ovc.position.x,ovc.position.y,60,75);
@@ -109,6 +157,22 @@ function cai(){
   corda.break();
   chave.cortar();
   chave = null;
+  tek.play();
+  
+}
+function cai2(){
+  corda2.break();
+  chave2.cortar();
+  chave2 = null;
+  tek.play();
+  
+}
+function cai3(){
+  corda3.break();
+  chave3.cortar();
+  chave3 = null;
+  tek.play();
+  
 }
 
 function colid(corpo,Sprite){
@@ -122,4 +186,16 @@ if(corpo!==null){
     return false;
   }
 }
+}
+function vento(){
+  Matter.Body.applyForce(ovc,{x:0,y:0},{x:0.01,y:0});
+  suuu.play();
+
+}
+function mut(){
+  if(thau.isPlaying()){
+    thau.stop();
+  }else{
+    thau.play();
+  }
 }
